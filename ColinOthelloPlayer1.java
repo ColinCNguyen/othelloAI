@@ -11,27 +11,27 @@ public class ColinOthelloPlayer1 extends OthelloPlayer {
 		gamePly=0;
 	}
 	public Move makeMove(){
-		alphaBetaPruning('O', 5, board, -10000, 10000);
-		bestMove = new Move(bestRow,bestCol,'O');
+		alphaBetaPruning(token, 5, board, -10000, 10000);
+		bestMove = new Move(bestRow,bestCol,token);
 		System.out.println(bestRow + " row " + bestCol + " col ");
 		board.makeMove(bestMove);
 		return bestMove;
 	}
-	public int alphaBetaPruning(char token, int ply, Board b, int alpha, int beta){
+	public int alphaBetaPruning(char theToken, int ply, Board b, int alpha, int beta){
 		int bestScore;
 		int currentScore;
 		Move moveMade;
 		if(ply > gamePly)
 			gamePly = ply;
 		if(ply==0 || board.gameOver())
-			return evaluate('O');
-		if(token=='O'){
+			return evaluate(token);
+		if(theToken==token){
 			bestScore = -1000;
 			for(int i=0;i<8;i++){
 				for(int j=0; j<8; j++){
-					if(board.canMove(token,i,j)){
-						moveMade=board.makeMove(token,i,j);
-						currentScore = alphaBetaPruning('X', ply-1, b, alpha, beta);
+					if(board.canMove(theToken,i,j)){
+						moveMade=board.makeMove(theToken,i,j);
+						currentScore = alphaBetaPruning(oppositeToken(theToken), ply-1, b, alpha, beta);
 						board.unMakeMove(moveMade);
 						if(currentScore > bestScore){
 							bestScore = currentScore;
@@ -53,9 +53,9 @@ public class ColinOthelloPlayer1 extends OthelloPlayer {
 			bestScore = 10000;
 			for(int i=0;i<8;i++){
 				for(int j=0; j<8; j++){
-					if(board.canMove(token,i,j)){
-						moveMade=board.makeMove(token,i,j);
-						currentScore = alphaBetaPruning('O', ply-1, b, alpha, beta);
+					if(board.canMove(theToken,i,j)){
+						moveMade=board.makeMove(theToken,i,j);
+						currentScore = alphaBetaPruning(oppositeToken(theToken), ply-1, b, alpha, beta);
 						board.unMakeMove(moveMade);
 						if(currentScore < bestScore){
 							bestScore = currentScore;
@@ -74,6 +74,7 @@ public class ColinOthelloPlayer1 extends OthelloPlayer {
 			return bestScore;
 		}
 	}
+
 	public int evaluate(char token){
 		int good,bad,count;
 		good=0;
@@ -122,6 +123,13 @@ public class ColinOthelloPlayer1 extends OthelloPlayer {
 			}
 		}
 		return good-bad;
+	}
+
+	public char oppositeToken(char token){
+		if(token=='O')
+			return 'X';
+		else
+			return 'O';
 	}
 
 }
